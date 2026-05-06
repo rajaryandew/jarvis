@@ -45,7 +45,7 @@ def callback(r,audio):
 with source:
     r.adjust_for_ambient_noise(source,2)
 print("Say something!")
-stop_listening = r.listen_in_background(source,callback)
+stop_listening = r.listen_in_background(source,callback,phrase_time_limit=0.5)
 
 
 while True:
