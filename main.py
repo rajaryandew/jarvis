@@ -1,3 +1,7 @@
+import os
+os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
+
+import pygame
 
 import speech_recognition as sr
 import time
@@ -42,6 +46,7 @@ def callback(r,audio):
         print("something went wrong",e)
 
 # obtain audio from the microphone
+print("Adjusting, waitt.....")
 with source:
     r.adjust_for_ambient_noise(source,2)
 print("Say something!")
