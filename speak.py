@@ -5,6 +5,11 @@ import os
 
 mixer.init()
 def speak(text):
+    try:
+        os.remove("speak.mp3")
+    except FileNotFoundError:
+        pass
+    
     tts = gTTS(text)
     tts.save("speak.mp3")
 

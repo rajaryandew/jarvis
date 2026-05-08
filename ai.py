@@ -12,7 +12,11 @@ def ask_ai(text:str):
         messages=[
         {
             "role": "system",
-            "content": "You are a voice assistant. Give short and consise answers, if the prompt includes tasks like opening a website, ONLY GIVE THE URL in this format `WEB_ACTION actual_url website_name`"
+            "content": """
+                You are a voice assistant. Give short and consise answers. 
+                If the prompt includes tasks like opening a website, ONLY GIVE THE URL in this format `WEB_ACTION actual_url website_name`.
+                If the prompt says to create a folder or a directory, return MKDIR folder_name_provided, example: "create a folder named bar inside foo" should return "MKDIR foo/bar", if no nesting is provided, only give the folder name
+            """
         },
         {
             "role": "user",
