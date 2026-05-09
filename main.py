@@ -1,15 +1,19 @@
 import os
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
 
+
+from dotenv import load_dotenv
+load_dotenv()
 import speech_recognition as sr
 import time
 import webbrowser
-from pathlib import Path
+from airconditioner import airconditioneraction
 from ai import *
 from speak import *
 
 r = sr.Recognizer()
 source = sr.Microphone()
+
 
 def opencode():
     os.system("code")
@@ -30,6 +34,7 @@ def openwebsite(response):
     speak(f"Opening {website}")
     webbrowser.open(url)
 
+
 def generateSpeech(data:str):
     response:str =  ask_ai(data)
     try:
@@ -37,19 +42,20 @@ def generateSpeech(data:str):
             openwebsite(response)     
         elif(response.startswith("MKDIR")):
             createdir(response)
+        elif(response.startswith("AC_ACTION")):
+            airconditioneraction(response)
         else:
             speak(response)
     except:
         speak("Sorry, unable to do the task, try again later!")
-
 
 def callback(r,audio):
     try:
         data:str = r.recognize_google(audio)
         print("processing...")
         
-        if("turn off" in data) or ("exit" in data):
-            speak("Turning off")
+        if("exit" in data):
+            speak("Exitting")
             os._exit(0)
         
         if("open code" in data):
