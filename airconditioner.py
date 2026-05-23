@@ -1,14 +1,10 @@
 import httpx
 import os
-from speak import speak
-import threading
+from speak import speak, speak_async
 
 SMARTTHINGS_TOKEN = os.getenv("SMARTTHINGS_TOKEN")
 headers = {"Authorization": f"Bearer {SMARTTHINGS_TOKEN}"}
 
-
-def speak_async(text):
-    threading.Thread(target=speak, args=(text,)).start()
 
 
 try:

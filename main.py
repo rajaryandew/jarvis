@@ -2,6 +2,8 @@ import os
 
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"
 
+from dotenv import load_dotenv
+load_dotenv()
 
 import subprocess
 import speech_recognition as sr
@@ -10,19 +12,24 @@ import webbrowser
 from airconditioner import airconditioneraction
 from ai import *
 from speak import *
-from dotenv import load_dotenv
 
-load_dotenv()
 r = sr.Recognizer()
 source = sr.Microphone()
 
 
+def openspotify():
+    subprocess.run("com.spotify.Client")
+    speak_async("Opening spotify")
+
+
 def openvim():
     subprocess.run("nvim")
+    speak_async("Opening vim")
 
 
 def opencode():
     subprocess.run("code")
+    speak_async("Opening VS Code")
 
 
 def createdir(response):
@@ -60,16 +67,18 @@ def generateSpeech(data: str):
 
 def callback(r, audio):
     try:
-        data: str = r.recognize_google(audio)
+        data: str = r.recognize_google(audio).lower()
         print("processing...")
 
         if "exit" in data:
             speak("Exitting")
             os._exit(0)
-        if "open vim" in data:
+        elif "open vim" in data:
             openvim()
-        if "open code" in data:
+        elif "open code" in data:
             opencode()
+        elif "open spotify" in data:
+            openspotify()
         else:
             generateSpeech(data)
 

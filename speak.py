@@ -3,6 +3,7 @@ from pygame import mixer
 import time
 import os
 from io import BytesIO
+import threading
 
 mixer.init(frequency=88200 * 2)
 
@@ -23,3 +24,8 @@ def speak(text):
     while mixer.music.get_busy():  # wait for music to finish playing
         time.sleep(0.1)
     mixer.music.unload()
+
+def speak_async(text):
+    threading.Thread(target=speak, args=(text,)).start()
+
+
