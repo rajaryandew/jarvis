@@ -1,9 +1,11 @@
 from gtts import gTTS
-from pygame import mixer
+import pygame
 import time
 import os
 from io import BytesIO
 import threading
+
+mixer = pygame.mixer
 
 mixer.init(frequency=88200 * 2)
 

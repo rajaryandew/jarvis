@@ -1,19 +1,18 @@
-import httpx
-import os
+import subprocess
+from gtts.tts import json
 from speak import speak, speak_async
 
-SMARTTHINGS_TOKEN = os.getenv("SMARTTHINGS_TOKEN")
-headers = {"Authorization": f"Bearer {SMARTTHINGS_TOKEN}"}
+ac_id = None
+devices = json.loads(
+    subprocess.run(
+        ["smartthings", "devices", "--json"], capture_output=True, text=True
+    ).stdout
+)
 
-
-
-try:
-    devices = httpx.get(
-        "https://api.smartthings.com/v1/devices", headers=headers
-    ).json()
-    ac_id = devices["items"][1]["deviceId"]
-except:
-    print("Failed to get the ac information")
+for device in devices:
+    if device["label"] == "Room air conditioner":
+        ac_id = device["deviceId"]
+print(ac_id)
 
 
 def createbody(capability: str, command: str, arguments: str = ""):
@@ -32,34 +31,15 @@ def createbody(capability: str, command: str, arguments: str = ""):
 def airconditioneraction(response: str):
     action = response.split(" ")[1]
     if action == "turn_on":
-        body = createbody(capability="switch", command="on")
         speak_async("Turning on the AC")
-        httpx.post(
-            f"https://api.smartthings.com/v1/devices/{ac_id}/commands",
-            headers=headers,
-            json=body,
-        )
+        subprocess.run(["smartthings","devices:commands", ac_id, 'switch:on'])
     elif action == "turn_off":
-        body = createbody(capability="switch", command="off")
         speak_async("Turning off the AC")
-        httpx.post(
-            f"https://api.smartthings.com/v1/devices/{ac_id}/commands",
-            headers=headers,
-            json=body,
-        )
+        subprocess.run(["smartthings", "devices:commands", ac_id, "switch:off"])
     elif action.startswith("setTemp"):
         temp = action.split("_")[1]
         if (int(temp) < 16) or (int(temp) > 30):
             speak("Invalid temperature provided")
             return
-        body = createbody(
-            capability="thermostatCoolingSetpoint",
-            command=f"setCoolingSetpoint",
-            arguments=int(temp),
-        )
-        response = httpx.post(
-            f"https://api.smartthings.com/v1/devices/{ac_id}/commands",
-            headers=headers,
-            json=body,
-        )
+        subprocess.run(["smartthings",'devices:commands', ac_id, f"thermostatCoolingSetpoint:setCoolingSetpoint({int(temp)})"])
         speak(f"Setting the temperature to {temp}")
